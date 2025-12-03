@@ -5,7 +5,7 @@ def parse_range(string):
     return (int(start), int(end))
 
 with open('input.txt') as file:
-    ranges = map(parse_range, file.read().split(','))
+    ranges = list(map(parse_range, file.read().split(',')))
 
 # Part 1
 
