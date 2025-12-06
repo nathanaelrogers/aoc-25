@@ -29,19 +29,17 @@ def part_1(ranges, ids):
     cur_id = heappop(ids)
 
     while cur_start:
-        # if there are further ranges we need to check for overlap
+        # there are more ranges. check if this range might overlap with the next
         if ranges:
             next_start, next_end = heappop(ranges)
 
-            # the next range starts inside the current one, so it overlaps
+            # there is an overlap. expand the current range using the next range
             if next_start <= cur_end:
                 cur_end = max(cur_end, next_end)
                 continue
 
-        # if we're not overlapping we can run through all the ids up to the end
+        # no overlap with the next range. update counter using calculated range
         while cur_id:
-            # print(f'examining id {cur_id}')
-
             if cur_id > cur_end:
                 break
 
@@ -49,8 +47,8 @@ def part_1(ranges, ids):
                 res += 1
 
             cur_id = heappop(ids) if ids else None
-        
-        # if there are ranges left to check we update before iterating
+
+        # if there are no ranges left our work is done
         if not ranges:
             break
         else:
@@ -67,18 +65,15 @@ def part_2(ranges):
     cur_start, cur_end = heappop(ranges)
 
     while cur_start:
-        # if there are further ranges we need to check for overlap
         if ranges:
             next_start, next_end = heappop(ranges)
 
-            # the next range starts inside the current one, so it overlaps
             if next_start <= cur_end:
                 cur_end = max(cur_end, next_end)
                 continue
 
         res += cur_end - cur_start + 1
-        
-        # if there are ranges left to check we update before iterating
+
         if not ranges:
             break
         else:
@@ -89,5 +84,4 @@ def part_2(ranges):
 print('part 2:', part_2(ranges.copy()))
 
 end = perf_counter_ns()
-
 print(f'time: {(end - start) / 1E6}')
