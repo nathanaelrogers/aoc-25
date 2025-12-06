@@ -1,3 +1,6 @@
+import time
+start = time.perf_counter_ns()
+
 from functools import reduce
 from operator import mul, add
 
@@ -29,3 +32,6 @@ for c in range(COLS):
     results.append(reduce(operations[c], operands))
 
 print(f'part 2: {sum(results)}')
+
+end = time.perf_counter_ns()
+print(f'time: {(end - start) / 1E6}')
