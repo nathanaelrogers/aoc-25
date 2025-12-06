@@ -20,7 +20,7 @@ for c in range(COLS):
     cols.append(''.join([ch_grid[r][c] for r in range(ROWS)]).strip())
 
 results = []
-pos = -1
+pos = 0
 for op in operations:
     operands = []
     while pos < len(cols) and cols[pos] != '':
