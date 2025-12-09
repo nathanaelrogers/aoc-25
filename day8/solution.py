@@ -2,7 +2,6 @@ from time import perf_counter_ns
 start = perf_counter_ns()
 
 from itertools import combinations
-from math import sqrt
 from heapq import heappush, heappop
 from operator import mul
 from functools import reduce
@@ -16,7 +15,7 @@ def dist(a_val, b_val):
     total = 0
     for i in range(len(a_val)):
         total += (a_val[i] - b_val[i]) ** 2
-    return sqrt(total)
+    return total
 
 distances = []
 for a, b in combinations(boxes, 2):
@@ -26,30 +25,19 @@ for a, b in combinations(boxes, 2):
 
 connected = dict()
 for id, val in boxes:
-    #               (owner, size)
-    connected[id] = (id, 1)
-
-def chase(start_id):
-    owner_id, size = connected[start_id]
-
-    while size == 0:
-        owner_id, size = connected[owner_id]
-
-    return owner_id
+    #               (owner, elements)
+    connected[id] = (id, (id,))
 
 def part1(d):
     sizes = []
-    for eid, size in d.values():
-        heappush(sizes, -size)
+    for eid, es in d.values():
+        heappush(sizes, -len(es))
 
     print(f'part 1: {reduce(mul, [-heappop(sizes) for _ in range(3)])}')
     return
 
 def part2(a, b):
-    a_id, (a_x, a_y, a_z) = boxes[a]
-    b_id, (b_x, b_y, b_z) = boxes[b]
-
-    print(f'part 2: {a_x * b_x}')
+    print(f'part 2: {boxes[a][1][0] * boxes[b][1][0]}')
     return
 
 count = 0
@@ -59,23 +47,24 @@ while distances:
         part1(connected.copy())
 
     d, a, b = heappop(distances)
-    a_eid, b_eid = chase(a), chase(b)
 
-    if a_eid == b_eid:
+    a_owner, a_es = connected[a]
+    b_owner, b_es = connected[b]
+
+    if a_owner == b_owner:
         continue
 
-    upper = max(a_eid, b_eid)
-    lower = min(a_eid, b_eid)
+    id1, es1 = connected[a_owner]
+    id2, es2 = connected[b_owner]
 
-    u_id, u_size = connected[upper]
-    connected[upper] = (lower, 0)
+    for e in es1:
+        connected[e] = (id2, ())
 
-    l_id, l_size = connected[lower]
-    new_size = l_size + u_size
-    if new_size == BOX_COUNT:
+    new_es = es2 + es1
+    if len(new_es) == BOX_COUNT:
         part2(a, b)
     else:
-        connected[lower] = (l_id, new_size)
+        connected[b_owner] = (id2, new_es)
 
 end = perf_counter_ns()
 print(f'time: {(end - start) / 1E6}')
